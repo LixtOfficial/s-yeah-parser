@@ -6,6 +6,11 @@ on:
     - cron: "*/30 * * * *"
   workflow_dispatch: # Allow manual trigger from GitHub UI
 
+# Prevent parallel runs — new run cancels any in-progress one
+concurrency:
+  group: parse-schedules
+  cancel-in-progress: true
+
 jobs:
   parse:
     runs-on: ubuntu-latest
@@ -34,6 +39,10 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add output/
           # Only commit if there are changes
-          git diff --staged --quiet || git commit -m "Update outage schedules $(date -u +'%Y-%m-%d %H:%M UTC')"
-          git pull --rebase
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Update outage schedules $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git pull --rebase origin main
           git push
