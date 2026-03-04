@@ -211,18 +211,27 @@ function countStatus(minutes, start, end, status) {
 }
 
 /**
- * Get Unix timestamp for midnight of a given date in Kyiv timezone (UTC+2/UTC+3)
+ * Get Unix timestamp for midnight of a given date in Kyiv timezone (UTC+2 or UTC+3 DST)
  * @param {Date} date
  * @returns {number} Unix timestamp in seconds
  */
 function getDateTimestamp(date) {
-  // Create a date at midnight UTC for the given date parts
   const year = date.getFullYear();
   const month = date.getMonth();
   const day = date.getDate();
-  // Midnight UTC for this date
-  const utcMidnight = Date.UTC(year, month, day, 0, 0, 0, 0);
-  return Math.floor(utcMidnight / 1000);
+
+  // Determine Kyiv UTC offset for this date using noon as a safe reference
+  // (avoiding DST transition edge cases at midnight)
+  const refUTC = new Date(Date.UTC(year, month, day, 12, 0, 0));
+  const kyivTime = new Date(refUTC.toLocaleString('en-US', { timeZone: 'Europe/Kyiv' }));
+  const utcTime = new Date(refUTC.toLocaleString('en-US', { timeZone: 'UTC' }));
+  const offsetMs = kyivTime.getTime() - utcTime.getTime();
+
+  // Midnight Kyiv time = midnight UTC - Kyiv offset
+  const midnightUTC = Date.UTC(year, month, day, 0, 0, 0, 0);
+  const midnightKyiv = midnightUTC - offsetMs;
+
+  return Math.floor(midnightKyiv / 1000);
 }
 
 /**
