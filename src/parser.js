@@ -266,6 +266,30 @@ function parseUpdateToISO(updateStr) {
 }
 
 /**
+ * Generate a full-day "power ON" slot object
+ */
+function allDayOn() {
+  const slots = {};
+  for (let h = 1; h <= 24; h++) {
+    slots[String(h)] = 'yes';
+  }
+  return slots;
+}
+
+/**
+ * Fill missing queues with all-day-on data and return sorted object
+ * (if a queue card is absent on the site, it means power is on all day)
+ */
+function fillMissingQueues(data, expectedQueues) {
+  const sorted = {};
+  for (const queueId of expectedQueues) {
+    const gpvKey = `GPV${queueId}`;
+    sorted[gpvKey] = data[gpvKey] || allDayOn();
+  }
+  return sorted;
+}
+
+/**
  * Full parse pipeline for a region
  */
 async function parseRegion(regionConfig) {
@@ -288,6 +312,8 @@ async function parseRegion(regionConfig) {
     const gpvKey = `GPV${queueId}`;
     todayData[gpvKey] = convertToHourlySlots(intervals);
   }
+  // Fill missing queues (absent cards = power on all day) and sort
+  const sortedTodayData = fillMissingQueues(todayData, regionConfig.queues);
 
   // Build result
   const result = {
@@ -295,7 +321,7 @@ async function parseRegion(regionConfig) {
     lastUpdated: parseUpdateToISO(updateTime),
     fact: {
       data: {
-        [String(todayTimestamp)]: todayData,
+        [String(todayTimestamp)]: sortedTodayData,
       },
       update: updateTime,
       today: todayTimestamp,
@@ -314,7 +340,7 @@ async function parseRegion(regionConfig) {
         const gpvKey = `GPV${queueId}`;
         tomorrowData[gpvKey] = convertToHourlySlots(intervals);
       }
-      result.fact.data[String(tomorrowTimestamp)] = tomorrowData;
+      result.fact.data[String(tomorrowTimestamp)] = fillMissingQueues(tomorrowData, regionConfig.queues);
       console.log(`  ✓ Tomorrow's schedule found`);
     } else {
       console.log(`  ⚠ Tomorrow's schedule not published yet`);
