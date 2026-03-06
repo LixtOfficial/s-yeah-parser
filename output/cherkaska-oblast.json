@@ -1,7 +1,6 @@
 {
   "regionId": "cherkaska-oblast",
-<<<<<<< HEAD
-  "lastUpdated": "2026-03-06T10:11:54.827Z",
+  "lastUpdated": "2026-03-06T10:34:08.755Z",
   "fact": {
     "data": {
       "1772748000": {
@@ -318,12 +317,6 @@
           "24": "yes"
         }
       }
-=======
-  "lastUpdated": "2026-03-06T10:27:17.562Z",
-  "fact": {
-    "data": {
-      "1772748000": {}
->>>>>>> 77acfc87119a962012ab5cc91c6f6014b04beb6b
     },
     "update": "",
     "today": 1772748000
