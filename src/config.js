@@ -33,6 +33,21 @@ const REGIONS = {
     path: 'sumska-oblast',
     queues: Array.from({ length: 6 }, (_, i) => [`${i + 1}.1`, `${i + 1}.2`]).flat(),
   },
+  'mykolaivska-oblast': {
+    name: 'Миколаївська область',
+    path: 'mykolaivska-oblast',
+    queues: Array.from({ length: 6 }, (_, i) => [`${i + 1}.1`, `${i + 1}.2`]).flat(),
+  },
+  'khersonska-oblast': {
+    name: 'Херсонська область',
+    path: 'khersonska-oblast',
+    queues: Array.from({ length: 6 }, (_, i) => [`${i + 1}.1`, `${i + 1}.2`]).flat(),
+  },
+  'chernivetska-oblast': {
+    name: 'Чернівецька область',
+    path: 'chernivetska-oblast',
+    queues: Array.from({ length: 6 }, (_, i) => [`${i + 1}.1`, `${i + 1}.2`]).flat(),
+  },
 };
 
 module.exports = { BASE_URL, REGIONS };
