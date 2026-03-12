@@ -1,9 +1,9 @@
 {
   "regionId": "kirovohradska-oblast",
-  "lastUpdated": "2026-03-12T21:47:15.966Z",
+  "lastUpdated": "2026-03-12T22:12:14.876Z",
   "fact": {
     "data": {
-      "1773266400": {
+      "1773352800": {
         "GPV1.1": {
           "1": "yes",
           "2": "yes",
@@ -319,6 +319,6 @@
       }
     },
     "update": "",
-    "today": 1773266400
+    "today": 1773352800
   }
 }
