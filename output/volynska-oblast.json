@@ -1,6 +1,6 @@
 {
   "regionId": "volynska-oblast",
-  "lastUpdated": "2026-04-01T21:55:23.084Z",
+  "lastUpdated": "2026-04-01T23:00:00.000Z",
   "fact": {
     "data": {
       "1775077200": {
@@ -318,7 +318,7 @@
         }
       }
     },
-    "update": "",
+    "update": "02.04.2026 01:00",
     "today": 1775077200
   }
 }
