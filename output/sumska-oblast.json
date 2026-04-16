@@ -1,6 +1,6 @@
 {
   "regionId": "sumska-oblast",
-  "lastUpdated": "2026-04-16T07:20:29.652Z",
+  "lastUpdated": "2026-04-16T08:23:00.000Z",
   "fact": {
     "data": {
       "1776286800": {
@@ -318,7 +318,7 @@
         }
       }
     },
-    "update": "",
+    "update": "16.04.2026 10:23",
     "today": 1776286800
   }
 }
