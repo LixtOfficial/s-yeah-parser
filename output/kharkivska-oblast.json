@@ -1,9 +1,9 @@
 {
   "regionId": "kharkivska-oblast",
-  "lastUpdated": "2026-04-24T20:55:27.016Z",
+  "lastUpdated": "2026-04-24T21:00:55.232Z",
   "fact": {
     "data": {
-      "1776978000": {
+      "1777064400": {
         "GPV1.1": {
           "1": "yes",
           "2": "yes",
@@ -319,6 +319,6 @@
       }
     },
     "update": "",
-    "today": 1776978000
+    "today": 1777064400
   }
 }
