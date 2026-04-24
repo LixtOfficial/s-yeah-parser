@@ -1,9 +1,9 @@
 name: Parse Outage Schedules
 
 on:
-  schedule:
-    # Run every 5 minutes
-    - cron: "*/5 * * * *"
+  #schedule:
+  # Run every 5 minutes
+  #- cron: "*/5 * * * *"
   workflow_dispatch: # Allow manual trigger from GitHub UI
 
 # Prevent parallel runs — new run cancels any in-progress one
