@@ -1,9 +1,9 @@
 {
   "regionId": "khersonska-oblast",
-  "lastUpdated": "2026-06-03T20:45:41.025Z",
+  "lastUpdated": "2026-06-03T21:01:05.810Z",
   "fact": {
     "data": {
-      "1780434000": {
+      "1780520400": {
         "GPV1.1": {
           "1": "yes",
           "2": "yes",
@@ -319,6 +319,6 @@
       }
     },
     "update": "",
-    "today": 1780434000
+    "today": 1780520400
   }
 }
