@@ -1,9 +1,9 @@
 {
   "regionId": "chernivetska-oblast",
-  "lastUpdated": "2026-08-06T20:31:04.007Z",
+  "lastUpdated": "2026-08-06T21:01:16.556Z",
   "fact": {
     "data": {
-      "1785963600": {
+      "1786050000": {
         "GPV1.1": {
           "1": "yes",
           "2": "yes",
@@ -319,6 +319,6 @@
       }
     },
     "update": "",
-    "today": 1785963600
+    "today": 1786050000
   }
 }
