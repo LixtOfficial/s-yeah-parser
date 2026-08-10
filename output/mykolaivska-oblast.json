@@ -1,9 +1,9 @@
 {
   "regionId": "mykolaivska-oblast",
-  "lastUpdated": "2026-08-10T20:45:59.763Z",
+  "lastUpdated": "2026-08-10T21:01:22.258Z",
   "fact": {
     "data": {
-      "1786309200": {
+      "1786395600": {
         "GPV1.1": {
           "1": "yes",
           "2": "yes",
@@ -319,6 +319,6 @@
       }
     },
     "update": "",
-    "today": 1786309200
+    "today": 1786395600
   }
 }
