@@ -1,6 +1,6 @@
 {
   "regionId": "kyivska-oblast",
-  "lastUpdated": "2026-09-30T21:01:30.177Z",
+  "lastUpdated": "2026-09-30T22:03:00.000Z",
   "fact": {
     "data": {
       "1790802000": {
@@ -632,7 +632,7 @@
         }
       }
     },
-    "update": "",
+    "update": "01.10.2026 00:03",
     "today": 1790802000
   }
 }
