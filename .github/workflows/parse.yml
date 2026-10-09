@@ -1,48 +1,61 @@
 name: Parse Outage Schedules
 
 on:
-  #schedule:
-  # Run every 5 minutes
-  #- cron: "*/5 * * * *"
-  workflow_dispatch: # Allow manual trigger from GitHub UI
+  # Uncomment to run automatically (every 10 minutes is plenty for this site)
+  # schedule:
+  #   - cron: "*/10 * * * *"
+  workflow_dispatch:
 
-# Prevent parallel runs — new run cancels any in-progress one
+# Never run two parses at once; queue the new run instead of killing a run
+# that may be in the middle of pushing.
 concurrency:
   group: parse-schedules
-  cancel-in-progress: true
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
   parse:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 10
     permissions:
       contents: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: 22
+          cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
+
+      - run: npm run check
 
       - name: Run parser
-        run: node src/index.js
+        id: parse
+        run: npm run parse
+        continue-on-error: true
 
+      # Publish whatever regions succeeded, even if others failed.
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add output/
-          # Only commit if there are changes
           if git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0
           fi
           git commit -m "Update outage schedules $(date -u +'%Y-%m-%d %H:%M UTC')"
-          git pull --rebase origin main
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push
+
+      # Surface parser failures (e.g. site layout change) as a failed run.
+      - name: Fail if parser failed
+        if: steps.parse.outcome == 'failure'
+        run: |
+          echo "::error::Parser failed for at least one region — see the 'Run parser' step."
+          exit 1

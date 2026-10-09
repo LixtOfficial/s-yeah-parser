@@ -1,57 +1,64 @@
-const fs = require('fs');
-const path = require('path');
-const { REGIONS } = require('./config');
-const { parseRegion } = require('./parser');
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { HTTP, REGIONS } from './config.js';
+import { fetchRegion } from './schedule.js';
+import { saveRegion } from './store.js';
 
-const OUTPUT_DIR = path.join(__dirname, '..', 'output');
+const OUTPUT_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'output');
+
+const logger = {
+  info: (msg) => console.log(msg),
+  warn: (msg) => console.warn(`  ⚠ ${msg}`),
+  error: (msg) => console.error(`  ✗ ${msg}`),
+};
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** @param {string[]} args @returns {string[]} */
+function selectRegions(args) {
+  if (args.length === 0) return Object.keys(REGIONS);
+  const unknown = args.filter((key) => !Object.hasOwn(REGIONS, key));
+  if (unknown.length > 0) {
+    throw new Error(
+      `Unknown region(s): ${unknown.join(', ')}. Available: ${Object.keys(REGIONS).join(', ')}`,
+    );
+  }
+  return [...new Set(args)];
+}
 
 async function main() {
-  // Get regions from CLI args, or parse all
-  const args = process.argv.slice(2);
-  let regionKeys;
+  const keys = selectRegions(process.argv.slice(2));
+  logger.info(`Parsing ${keys.length} region(s)...\n`);
 
-  if (args.length > 0) {
-    regionKeys = args.filter((key) => {
-      if (!REGIONS[key]) {
-        console.error(`Unknown region: "${key}". Available: ${Object.keys(REGIONS).join(', ')}`);
-        return false;
-      }
-      return true;
-    });
-    if (regionKeys.length === 0) {
-      process.exit(1);
-    }
-  } else {
-    regionKeys = Object.keys(REGIONS);
-  }
+  const failed = [];
+  const skipped = [];
 
-  // Create output directory
-  if (!fs.existsSync(OUTPUT_DIR)) {
-    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-  }
-
-  console.log(`Parsing ${regionKeys.length} region(s)...\n`);
-
-  for (const key of regionKeys) {
+  for (const [index, key] of keys.entries()) {
+    if (index > 0) await sleep(HTTP.requestGapMs);
     const region = REGIONS[key];
-    console.log(`▶ ${region.name} (${key})`);
+    logger.info(`▶ ${region.name} (${key})`);
 
     try {
-      const result = await parseRegion(region);
-
-      const outputFile = path.join(OUTPUT_DIR, `${key}.json`);
-      fs.writeFileSync(outputFile, JSON.stringify(result, null, 2), 'utf-8');
-
-      const queueCount = Object.keys(Object.values(result.fact.data)[0] || {}).length;
-      const dayCount = Object.keys(result.fact.data).length;
-      console.log(`  ✓ Saved: ${outputFile}`);
-      console.log(`    ${queueCount} queues, ${dayCount} day(s)\n`);
+      const outcome = await fetchRegion(region, { logger });
+      if (outcome.status === 'not-published') {
+        // Keep the previous file instead of overwriting it with empty/guessed data.
+        skipped.push(key);
+        logger.warn("today's schedule is not published yet — previous file kept");
+        continue;
+      }
+      const state = await saveRegion(OUTPUT_DIR, key, outcome.result);
+      const days = Object.keys(outcome.result.fact.data).length;
+      logger.info(`  ✓ ${state} (${region.queues.length} queues, ${days} day(s))`);
     } catch (err) {
-      console.error(`  ✗ Error parsing ${key}: ${err.message}\n`);
+      failed.push(key);
+      logger.error(`${key}: ${err.name}: ${err.message}`);
     }
   }
 
-  console.log('Done!');
+  logger.info(
+    `\nDone: ${keys.length - failed.length - skipped.length} ok, ${skipped.length} skipped, ${failed.length} failed.`,
+  );
+  if (failed.length > 0) process.exitCode = 1;
 }
 
 main().catch((err) => {
