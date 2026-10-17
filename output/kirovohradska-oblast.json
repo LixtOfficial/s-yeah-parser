@@ -1,6 +1,6 @@
 {
   "regionId": "kirovohradska-oblast",
-  "lastUpdated": "2026-10-17T21:00:00.000Z",
+  "lastUpdated": "2026-10-17T21:06:00.000Z",
   "fact": {
     "data": {
       "1792270800": {
@@ -318,7 +318,7 @@
         }
       }
     },
-    "update": "18.10.2026 00:00",
+    "update": "18.10.2026 00:06",
     "today": 1792270800
   }
 }
