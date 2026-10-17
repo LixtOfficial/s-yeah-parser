@@ -6,11 +6,13 @@ const slot = ([time, on]) => `
     <span class="bz-schedule-slot__badge" role="img" aria-label="${on ? 'Є світло' : 'Без світла'}" title="${on ? 'Є світло' : 'Без світла'}"><svg></svg></span>
   </div>`;
 
-export const card = (queue, slots) => `
+export const card = (queue, slots, title = `Черга ${queue}`) => `
   <article class="bz-schedule-card">
-    <a href="/x" class="bz-schedule-card__head">
-      <span class="bz-schedule-card__heading"><span class="bz-schedule-card__label">Графік</span><strong>Черга ${queue}</strong></span>
-    </a>
+    <div class="bz-schedule-card__head">
+      <a href="/region/cherha-${queue.replace('.', '-')}" class="bz-schedule-card__head-link">
+        <span class="bz-schedule-card__heading"><span class="bz-schedule-card__label">Графік</span><strong>${title}</strong></span>
+      </a>
+    </div>
     <div class="bz-schedule-card__body">${slots.map(slot).join('')}</div>
     <footer><span class="bz-schedule-card__updated"><span>Оновлено 09.10.2026 01:39</span></span></footer>
   </article>`;

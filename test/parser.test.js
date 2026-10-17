@@ -19,6 +19,26 @@ describe('parseSchedulePage', () => {
     assert.equal(r.updatedAt, '2026-10-09T15:52:00.000Z');
   });
 
+  it('identifies queues by link when the title is "Група N" (Chernivtsi layout)', () => {
+    const html = page({
+      body:
+        card('1.1', SAMPLE_DAY, 'Група 1') +
+        card('1.2', SAMPLE_DAY, 'Група 2') +
+        card('2.1', SAMPLE_DAY, 'Група 3'),
+    });
+    assert.deepEqual(Object.keys(parseSchedulePage(html, 'today').queues), ['1.1', '1.2', '2.1']);
+  });
+
+  it('throws when link and title name different queues', () => {
+    const bad = card('1.1', SAMPLE_DAY, 'Черга 9.9');
+    assert.throws(() => parseSchedulePage(page({ body: bad }), 'today'), /different queues/);
+  });
+
+  it('throws when a card has no queue id at all', () => {
+    const bad = card('1.1', SAMPLE_DAY, 'Щось нове').replace('cherha-1-1', 'unknown');
+    assert.throws(() => parseSchedulePage(page({ body: bad }), 'today'), /recognisable queue id/);
+  });
+
   it('detects "not published" page', () => {
     assert.equal(parseSchedulePage(emptyPage('today'), 'today').status, 'not-published');
     assert.equal(parseSchedulePage(emptyPage('tomorrow'), 'tomorrow').status, 'not-published');
