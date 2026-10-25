@@ -57,5 +57,6 @@ export const HTTP = Object.freeze({
   maxBytes: 5 * 1024 * 1024,
   /** Pause between requests to be polite to the site */
   requestGapMs: 500,
-  userAgent: 'Mozilla/5.0 (compatible; dtek-kyiv-parser/2.0; +https://github.com/LixtOfficial/s-yeah-parser)',
+  userAgent:
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
 });
