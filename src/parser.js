@@ -17,7 +17,7 @@ export const SELECTORS = Object.freeze({
   slotOn: 'bz-schedule-slot--on',
   slotOff: 'bz-schedule-slot--off',
   empty: '.bz-schedule-empty',
-  heroUpdated: '.bz-schedule-hero__updated',
+  heroUpdated: '.bz-schedule-hero__stamp--updated, .bz-schedule-hero__updated',
   periodToday: '.bz-schedule-hero__period--today',
   periodTomorrow: '.bz-schedule-hero__period--tomorrow',
 });
@@ -86,6 +86,37 @@ function readSlotState($, slotEl, context) {
 }
 
 /**
+ * Read the update timestamp from the page header or card footer.
+ * Supports both the new freshness stamp with semantic <time> and the legacy header text.
+ */
+function readUpdateTime($) {
+  const heroStamp = $(SELECTORS.heroUpdated).first();
+  if (heroStamp.length > 0) {
+    const timeEl = heroStamp.find('time');
+    const dt = timeEl.attr('datetime');
+    if (dt) {
+      const d = new Date(dt);
+      if (!Number.isNaN(d.getTime())) return d.toISOString();
+    }
+    const title = timeEl.attr('title');
+    if (title) {
+      const fromTitle = parseSiteDateTime(title);
+      if (fromTitle) return fromTitle;
+    }
+    return parseSiteDateTime(heroStamp.text());
+  }
+
+  const cardUpdated = $('.bz-schedule-card__updated').first().text();
+  if (cardUpdated) {
+    const fromCard = parseSiteDateTime(cardUpdated);
+    if (fromCard) return fromCard;
+  }
+
+  const bodyText = $('.bz-schedule-hero').text() || $('body').text();
+  return parseSiteDateTime(bodyText);
+}
+
+/**
  * Parse a bezsvitla.com.ua schedule page. Pure function: no I/O, no clock.
  *
  * Throws {@link LayoutChangedError} whenever the page is neither a recognisable
@@ -137,6 +168,6 @@ export function parseSchedulePage(html, expectedPeriod) {
     });
   }
 
-  const updatedText = $(SELECTORS.heroUpdated).first().text();
-  return { status: 'published', updatedAt: parseSiteDateTime(updatedText), queues };
+  const updatedAt = readUpdateTime($);
+  return { status: 'published', updatedAt, queues };
 }

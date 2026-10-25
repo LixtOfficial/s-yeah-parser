@@ -19,6 +19,24 @@ describe('parseSchedulePage', () => {
     assert.equal(r.updatedAt, '2026-10-09T15:52:00.000Z');
   });
 
+  it('parses update time from new hero freshness stamp (<time datetime="...">)', () => {
+    const html = `<!DOCTYPE html>
+<html><body>
+  <section class="bz-schedule-hero">
+    <h1 class="bz-schedule-hero__title">Графік <span class="bz-schedule-hero__period bz-schedule-hero__period--today">x</span></h1>
+    <div class="bz-schedule-hero__freshness">
+      <span class="bz-schedule-hero__stamp bz-schedule-hero__stamp--updated">
+        <span>Оновлено:</span>
+        <time datetime="2026-10-24T20:48:00+03:00">24.10 20:48</time>
+      </span>
+    </div>
+  </section>
+  ${card('1.1', SAMPLE_DAY)}
+</body></html>`;
+    const r = parseSchedulePage(html, 'today');
+    assert.equal(r.updatedAt, '2026-10-24T17:48:00.000Z');
+  });
+
   it('identifies queues by link when the title is "Група N" (Chernivtsi layout)', () => {
     const html = page({
       body:
