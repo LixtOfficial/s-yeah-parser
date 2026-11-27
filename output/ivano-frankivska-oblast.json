@@ -1,6 +1,6 @@
 {
   "regionId": "ivano-frankivska-oblast",
-  "lastUpdated": "2026-11-26T20:21:06.000Z",
+  "lastUpdated": "2026-11-27T02:54:06.000Z",
   "fact": {
     "data": {
       "1795730400": {
@@ -318,7 +318,7 @@
         }
       }
     },
-    "update": "26.11.2026 22:21",
+    "update": "27.11.2026 04:54",
     "today": 1795730400
   }
 }
